@@ -1,0 +1,46 @@
+{% load static%}
+
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="UTF-8">
+  <title>Multiple File Uploader</title>
+  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+  
+      <link rel="stylesheet" href="{% static 'file_upload/css/style.css' %}">
+
+  
+</head>
+
+<body>
+
+  <form method="post" class="file-uploader"  action="{% url 'upload_data' %}"  enctype="multipart/form-data">
+  <div class="file-uploader__message-area">
+    <p>Select a file to upload</p>
+  </div>
+    {% csrf_token %}
+  <div class="file-chooser">
+    <input class="file-chooser__input" type="file" name="file_data" required>
+  </div>
+ 
+  <input type="text" name="problem" placeholder="enter the type of problem" required>
+  <input type="text" name="con" placeholder="enter the constitency" required> 
+  <input type="text" name="area" placeholder="enter the area" required>
+  <textarea name="description" placeholder="enter the description" required></textarea>
+  <input class="file-uploader__submit-button" type="submit" value="Upload">
+</form>
+  <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+
+  
+
+    <script  src="{% static 'file_upload/js/index.js'%}"></script>
+
+
+
+
+</body>
+
+</html>
