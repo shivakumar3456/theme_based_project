@@ -45,7 +45,53 @@ def upload(request):
     else:
         return render(request,"user_login.html")
 
-        
+@csrf_exempt
+def newscontent(request):
+    if request.user.is_authenticated:
+        '''
+        pv1 = request.POST['probview']
+        pv2 = request.POST['probview1']
+        postareaobj=None
+        if pv1 == 'area' and pv2 != '':
+            try:
+                postareaobj = Post.objects.filter(constituency=pv2)
+            except:
+                pass
+                
+            return render(request,"newspage.html",{'post_data':postareaobj})
+        elif pv1 == 'problem' and pv2 !='':
+            try:
+                postareaobj = Post.objects.filter(problem_statement=pv2)
+            except:
+                pass
+            return render(request,"newspage.html",{'post_data':postareaobj})
+        else:
+            return redirect('newsfeed')
+        '''
+        print(request.POST)
+        return HttpResponse("ss")
+    else:
+        return render(request,'user_login.html')
+
+@csrf_exempt
+def comment(request):
+    if request.user.is_authenticated and request.method == "POST":
+        comm = request.POST['comment']
+        postid=request.POST['postid']
+        profileobj= Profile.objects.get(user=request.user)
+        postobj= Post.objects.get(id=int(postid))
+        vandc= Votes_Comments(user_post=postobj,user_vote=profileobj,comment=comm)
+        vandc.save()
+        return redirect('/newsdata/'+postid+'/')
+
+    else:
+        return redirect('login')
+       
+@csrf_exempt
+def upvote(request,postid):
+    pass
+
+
 @csrf_exempt
 def upload_data(request):
     print('shiva')
@@ -85,13 +131,15 @@ def upload_data(request):
             return redirect('upload')
     else:
         return render(request,"user_login.html")
-
+'''
 def newsfeed(request):
     if request.user.is_authenticated:
         postdata = Post.objects.all()
         return render(request,"newspage.html",{'post_data':postdata})
     else:
         return redirect('user_login')
+'''
+
 def dashboard(request):
     pass
 
@@ -105,7 +153,7 @@ def newsfeed(request):
 
 def newsdata(request,name):
     if request.user.is_authenticated:
-        print(name)
+        print(request.POST)
         postdata = Post.objects.get(id=name)
         try:
             votecomm= Votes_Comments.objects.filter(user_post=name)
@@ -113,7 +161,7 @@ def newsdata(request,name):
             votecomm=[]
         photodata=Photos.objects.filter(user_post=name)
     
-        return render(request,"newsdata.html",{'post_data':postdata,'vote_comm':votecomm,'photo_data':photodata})
+        return render(request,"newsdata.html",{'j':0,'post_data':postdata,'vote_comm':votecomm,'photo_data':photodata})
     else:
         return redirect('user_login')
 

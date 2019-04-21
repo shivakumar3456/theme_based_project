@@ -14,6 +14,9 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
    
 <style>
+  .vamshi{
+    font-size: 18px;
+  }
   .topright {
   position: absolute;
   top: 8px;
@@ -49,7 +52,7 @@
         </div>
       </li>
       </ul>
-    <div class="topright">user : _...from d.b_
+    <div class="topright">user : {{request.user.username}}
         
       </div></div>
 </nav>
@@ -76,14 +79,14 @@
 <a href="#">Author: {{post_data.user_post.user.username}}</a>
 <div> 
     
-    <p><a href="#" class="btn btn-info ">
+    <p><a href="/socialissue/upvote/{{post_data.id}}/" class="btn btn-info ">
           <span class="glyphicon glyphicon-thumbs-up"></span> up_vote
         </a><a href="#" class="btn btn-info">
           <span class="glyphicon glyphicon-thumbs-down"></span> down_vote
         </a>
       </p>
-    <form class="form-horizontal" role="form">
-        
+    <form class="form-horizontal" role="form" action="{% url 'comment' %}" method="POST">
+        <input type="text" hidden value="{{post_data.id}}" name="postid">
         <div class="container">
   
   <!-- Trigger the modal with a button -->
@@ -97,9 +100,17 @@
       <div class="modal-content">
         
         <div class="modal-body">
+         
           {% for i in vote_comm%}
-          <p>no comments</p>
-          {% endfor %}
+          <div class="form-inline">
+          <label class="badge vamshi">user: {{i.user_vote.user.username}}</label>
+        
+        <label class="badge vamshi">{{i.comment}}</label>
+        </div>   
+        <br>
+        <br>
+        {% endfor %}
+         
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -109,11 +120,13 @@
   </div>
   </div>
             <div class="form-group" style="padding:14px;">
-            <textarea class="form-control" placeholder="comment"></textarea>
+            <textarea class="form-control" placeholder="comment" name="comment"></textarea>
                                     </div>
-        <button class="btn btn-primary pull-right" type="button" >add </button><ul class="list-inline"><li><a href=""><i class="glyphicon glyphicon-upload"></i></a></li><li><a href=""><i class="glyphicon glyphicon-map-marker"></i></a></li></ul>
-                                  </form>
-                              </div>
+                                    <input type="submit" name="submit" value="submit"/>
+                            </form>
+     <ul class="list-inline"><li><a href=""><i class="glyphicon glyphicon-upload"></i></a></li><li><a href=""><i class="glyphicon glyphicon-map-marker"></i></a></li></ul>
+          
+                          </div>
 </ul>
 </div>
        </div>
@@ -122,7 +135,7 @@
     </center>
 </div>     
       
-      
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>

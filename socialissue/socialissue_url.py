@@ -16,4 +16,9 @@ urlpatterns = [
     path('newsfeed/',views.newsfeed,name="newsfeed"),
     path('dashboard/',views.dashboard,name="dashboard"),
     path('all_news/',views.newsfeed,name="all_news"),
+    path('news_content/',views.newscontent ,name="news_content"),
+    path('comment/',views.comment,name='comment'),
+    #path('upvote/<int:postid>/',views.upvote,name='upvote'),
+    #path('downvote/<int:postid>/',views.downvote,name='downvote')
+
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

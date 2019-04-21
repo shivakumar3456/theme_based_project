@@ -1,3 +1,5 @@
+{% load static %}
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -38,19 +40,30 @@
   </div>
 </nav>
       <div class="search_id">
-       <form class="form-inline">
+    
+        
+
+        
+           <div class="form-inline">
+             <form method="POST">
+                          <span class="badge">search by</span>
            <div class="dropdown">
-  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    search by
-  </button>
-  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-    <a class="dropdown-item" href="#">AREA</a>
-    <a class="dropdown-item" href="#">PROBLEM</a>
-    <a class="dropdown-item" href="#">MINISTRY</a>
-  </div>
+   
+         <select name="probview" id="search_content" class="btn btn-light dropdown-toggle" class="custom-select" >
+       
+    <option  value="area">AREA</option>
+    <option value="problem">PROBLEM</option> 
+    <option value="ministry">MINISTRY</option>
+  
+  
+      </select>
 </div>
-    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-  </form>
+    <input id ="search_content1" name="probview1" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+   
+    <input type="button" class="btn btn-dark" id="search_content2" value="submit" onclick=fun()>    
+ </form>
+  </div>
+
           </div>
       <table class="table table-dark col1 container font-effect-outline">
   <thead>
@@ -61,11 +74,11 @@
       <th scope="col" class="font-effect-outline">VIEW</th>
     </tr>
   </thead>
-  <tbody>
+  <tbody class="tablebody">
       {% for i in post_data %}
     <tr>
       <td  ><span  class="font-effect-neon">{{ i.problem_statement}}</span></td>
-      <td  ><span  class="font-effect-neon">{{ i.constituency}}</span</td>
+        <td  ><span  class="font-effect-neon">{{ i.constituency}}</span></td>
       <td><span  class="font-effect-neon">{{i.user_post.user.username}}</span></td>
       <td><a href="/socialissue/newsdata/{{i.id}}/" class="btn"><span  class="font-effect-neon">view</span></a></td>
     </tr>
@@ -75,11 +88,18 @@
   </tbody>
 </table>
       
-
+  <script >
+  function fun(){
+    document.location.href="{% url 'news_content' %}";
+  }
+  </script>
     <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    
+    <!--  integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+   
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  
   </body>
 </html>
