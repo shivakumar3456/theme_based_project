@@ -2,8 +2,10 @@ from django.shortcuts import render,redirect,reverse
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as lg, logout 
-from .models import Profile, Post, Votes_Comments, Photos
+from .models import Profile, Post, Votes_Comments, Photos , Only_votes
 from django.views.decorators.csrf import csrf_exempt
+from datetime import date
+from django.db.models import CharField, Case, Value, When
 
 def register(request):
     if request.method == 'POST':
@@ -23,7 +25,7 @@ def register(request):
         user.save()
         print(constituency,mobile_number)
         try:
-            profile = Profile(user=user, mobile_no=mobile_number, address=address, constituency=constituency, location="")
+            profile = Profile(user=user, mobile_no=mobile_number, designation='n',address=address, constituency=constituency, location="")
             profile.save()
         except:
             User.objects.filter(email=user.email).delete()
@@ -88,8 +90,26 @@ def comment(request):
         return redirect('login')
        
 @csrf_exempt
-def upvote(request,postid):
-    pass
+def vote(request,postid,voted):
+    if request.user.is_authenticated:
+        profileobj= Profile.objects.get(user=request.user)
+        postobj= Post.objects.get(id=int(postid))
+        try:
+            if voted == 'u':
+                vandc= Only_votes(user_post=postobj,user_vote=profileobj,upordown=voted)
+                postobj.upvote_count=postobj.upvote_count+1
+            else:
+                vandc=Only_votes(user_post=postobj,user_vote=profileobj,upordown=voted)
+                postobj.downvote_count=postobj.downvote_count+1
+            vandc.save()
+            postobj.save()
+        except:
+            pass            
+        
+        return redirect('/newsdata/'+str(postid)+'/')
+    else:
+        return redirect('login')
+    
 
 
 @csrf_exempt
@@ -145,26 +165,116 @@ def dashboard(request):
 
 def newsfeed(request):
     if request.user.is_authenticated:
-        postdata = Post.objects.all()
-        return render(request,"newspage.html",{'post_data':postdata})
+        proobj=Profile.objects.get(user=request.user)
+        if proobj.designation=='n': 
+            postdata = Post.objects.exclude(status_of_post='nv').exclude(status_of_post='s')
+            return render(request,"newspage.html",{'post_data':postdata})
+        elif proobj.designation=='p':
+            postdata = Post.objects.filter(status_of_post='p',constituency=proobj.constituency)
+            return render(request,"polnewspage.html",{'post_data':postdata}) 
+        else:
+            postdata1 = Post.objects.filter(status_of_post='nv')
+            post1=Post.objects.filter(status_of_post='v')
+            l=[]
+            for i in postdata1:
+                l.append(i)
+            for i in post1:
+                if i.alloted_time.date() < date.today():
+                    l.append(i) 
+            print(l)
+            return render(request,"adminnewspage.html",{'post_data':l})  
     else:
         return redirect('user_login')
 
 
 def newsdata(request,name):
     if request.user.is_authenticated:
+        proobj=Profile.objects.get(user=request.user)
         print(request.POST)
         postdata = Post.objects.get(id=name)
+        obj=''
+        conval=False
+        if postdata.status_of_post=='v':
+            conval=True
+            obj='due date to raise the issue '+str(postdata.alloted_time)
+        else:
+          
+            obj='your problem will be solved by '+str(postdata.alloted_time)
         try:
             votecomm= Votes_Comments.objects.filter(user_post=name)
         except:
+            print('e')
             votecomm=[]
-        photodata=Photos.objects.filter(user_post=name)
     
-        return render(request,"newsdata.html",{'j':0,'post_data':postdata,'vote_comm':votecomm,'photo_data':photodata})
+        ovobj = Only_votes.objects.filter(user_vote=proobj.id,user_post=postdata.id)
+        if ovobj is None:
+            ovobj=[]
+        photodata=Photos.objects.filter(user_post=name)
+        print(ovobj,name,postdata,proobj.id,postdata.id)
+        if proobj.designation=='n': 
+            return render(request,"newsdata.html",{'somedata':obj,'ov_obj':ovobj,'post_data':postdata,'vote_comm':votecomm,'photo_data':photodata})
+        elif proobj.designation=='p':
+            return render(request,"polnewsdata.html",{'ov_obj':ovobj,'post_data':postdata,'vote_comm':votecomm,'photo_data':photodata})
+        else:
+            return render(request,"adminnewsdata.html",{'cval':conval,'ov_obj':ovobj,'post_data':postdata,'vote_comm':votecomm,'photo_data':photodata})
+
     else:
         return redirect('user_login')
+@csrf_exempt
+def accept(request,postid):
+    if request.user.is_authenticated:
+        proobj = Profile.objects.get(user=request.user)
+        postobj= Post.objects.get(id=postid)
+        if proobj.designation=='a':
+            postobj.status_of_post='v'
+            postobj.alloted_time=request.POST['time']
+            postobj.save()
+            return redirect('all_news')
+        if proobj.designation=='p':
+            postobj.alloted_time=request.POST['time']
+            postobj.save()
+            return redirect('all_news')
 
+    else:
+        return redirect('login')
+@csrf_exempt
+def reject(request,postid):
+    if request.user.is_authenticated:
+        proobj = Profile.objects.get(user=request.user)
+        postobj= Post.objects.get(id=postid)
+        if proobj.designation=='a':
+            postobj.status_of_post='r'
+            postobj.save()
+            return redirect('all_news')
+    else:
+        return redirect('login')
+
+def posted(request,postid):
+    if request.user.is_authenticated:
+         postobj=Post.objects.get(id=postid)
+         postobj.status_of_post='p'
+         postobj.save()
+         return redirect('all_news')
+    else:
+        return redirect('login')         
+
+
+@csrf_exempt
+def viewfile(request,postid):
+    if request.user.is_authenticated:
+        postobj=Post.objects.get(id=postid)
+        return redirect(postobj.file_data.url)
+    else:
+        return redirect('login')
+
+def solved(request,postid):
+    if request.user.is_authenticated:
+        postobj=Post.objects.get(id=postid)
+        postobj.status_of_post='s'
+        postobj.save()
+        return redirect("all_news")
+    else:
+        return redirect("login")
 
 
 def logout_view(request):

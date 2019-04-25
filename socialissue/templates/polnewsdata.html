@@ -1,0 +1,16 @@
+{% extends 'adminnewsdata.html' %}
+
+{% block k1%}
+
+<a href="/socialissue/solved/{{post_data.id}}/" class="btn btn-primary" >solved </a>   
+<br>       
+<form action="/socialissue/accept/{{post_data.id}}/" method="POST">
+ <label class="badge">posting time</label><input type="date" name="time">
+ <input type="submit" name="submit" value="solving" class="btn btn-primary"/>
+</form>
+
+
+<br>
+
+
+{% endblock%}

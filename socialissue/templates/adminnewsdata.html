@@ -56,8 +56,7 @@
         
       </div></div>
 </nav>
-      {% block c2 %}
-      {% endblock %}
+    <h1><center>ADMIN</center></h1>
 <div class="jumbotron jumbotron-fluid" style="background-color:orange">
   <div class="container">
     <h1 class="display-4" align="center">news feed !!</h1>
@@ -65,7 +64,7 @@
   </div>
 </div> 
       
-<center> <p class="badge" style="font-size:18px;">{{somedata}}</p></center>
+ 
 <div class="medium-8 columns"><center>
     
    <div class="card" style="width: 80rem;">
@@ -73,6 +72,7 @@
 {% for i in photo_data%}
 <img class="thumbnail" height="500px" src="{{i.photos_post.url}}">
 {% endfor %}
+<a href="/socialissue/viewfile/{{post_data.id}}" target="_blank" class="btn btn-primary">view file</a>
 <label>description</label>
 <p>{{ post_data.description}}</p>
 <div class="callout">
@@ -136,8 +136,21 @@
 </ul>
 </div>
        </div>
+       <center>
+           {% block k1 %}
+           {%if cval %}
+           <a href="/socialissue/posted/{{post_data.id}}/" class="btn btn-primary" > posted</a>          
+           {%else%}
+           <form action="/socialissue/accept/{{post_data.id}}/" method="POST">
+            <label class="badge">posting time</label><input type="date" name="time">
+            <input type="submit" name="submit" value="verified" class="btn btn-primary"/>
+        </form>
+     
        
-
+       <br>
+       <a href="/socialissue/reject/{{post_data.id}}/" class="btn btn-primary" > reject</a>
+        {% endif %}
+        {% endblock %}
     </center>
 </div>  
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>

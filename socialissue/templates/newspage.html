@@ -58,6 +58,8 @@
   
       </select>
 </div>
+{% block c1 %}
+{% endblock %}
     <input id ="search_content1" name="probview1" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
    
     <input type="button" class="btn btn-dark" id="search_content2" value="submit" onclick=fun()>    
@@ -71,6 +73,7 @@
       <th class="font-effect-outline" scope="col">PROBLEM</th>
       <th scope="col" class="font-effect-outline">AREA</th>
       <th scope="col" class="font-effect-outline">POSTED BY</th>
+      <th scope="col" class="font-effect-outline">STATUS</th>
       <th scope="col" class="font-effect-outline">VIEW</th>
     </tr>
   </thead>
@@ -80,6 +83,7 @@
       <td  ><span  class="font-effect-neon">{{ i.problem_statement}}</span></td>
         <td  ><span  class="font-effect-neon">{{ i.constituency}}</span></td>
       <td><span  class="font-effect-neon">{{i.user_post.user.username}}</span></td>
+      <td><span  class="font-effect-neon">{{i.val}}</span></td>
       <td><a href="/socialissue/newsdata/{{i.id}}/" class="btn"><span  class="font-effect-neon">view</span></a></td>
     </tr>
       {% endfor %}
